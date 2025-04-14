@@ -1,0 +1,30 @@
+---
+services:
+  dhcp4:
+    hostname: ${COMPOSE_PROJECT_NAME}
+    domainname: ${LOCAL_DOMAIN}
+    container_name: ${COMPOSE_PROJECT_NAME}
+    image: docker.cloudsmith.io/isc/docker/kea-dhcp4:${KEA_VERSION}
+    restart: unless-stopped
+    volumes:
+      - kea-conf:/etc/kea
+      - kea4-var:/var/lib/kea
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:  # network that binds container to host network interface.
+        ipv4_address: ${THIS_IP}
+      kea-backend:
+
+volumes:
+  kea-db:
+  kea-conf:
+  kea4-var:
+
+networks:
+  net1:
+    external: true
+    name: ${LAN_NAME}
+  kea-backend:
